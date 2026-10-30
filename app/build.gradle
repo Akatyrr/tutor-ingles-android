@@ -1,0 +1,54 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'app.tutoringles'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'app.tutoringles'
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+        // só os textos do sistema em português e inglês (o app não usa outros idiomas)
+        resourceConfigurations += ['pt', 'en']
+        // endereço que o app abre: o servidor próprio do Tutor (gradle.properties → tutorUrl)
+        buildConfigField 'String', 'TUTOR_URL', "\"${project.findProperty('tutorUrl') ?: 'https://claude.ai/artifact/EVsuGwMDyyAa82cnFWXYMX'}\""
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    // chave fixa (vem do GitHub, em variáveis de ambiente): todo APK novo instala por cima do antigo
+    signingConfigs {
+        fixa {
+            def arq = System.getenv('KEYSTORE_FILE')
+            if (arq) {
+                storeFile file(arq)
+                storeType 'pkcs12'
+                storePassword System.getenv('KEYSTORE_PASS')
+                keyAlias 'tutor'
+                keyPassword System.getenv('KEYSTORE_PASS')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            // APK de distribuição: o R8 tira o código que não é usado e encurta os nomes; recursos sem uso saem também
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // com a chave fixa do GitHub; sem ela (build local), a de depuração
+            signingConfig System.getenv('KEYSTORE_FILE') ? signingConfigs.fixa : signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
