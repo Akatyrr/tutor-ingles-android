@@ -1,0 +1,13 @@
+{
+  "identifier": "janela",
+  "description": "A página do Tutor (remota) pode mover, minimizar, maximizar e fechar a própria janela",
+  "windows": ["principal"],
+  "remote": { "urls": ["https://tutor-ingles.guigtx1080.workers.dev/*"] },
+  "permissions": [
+    "core:window:allow-start-dragging",
+    "core:window:allow-minimize",
+    "core:window:allow-toggle-maximize",
+    "core:window:allow-close",
+    "core:window:allow-internal-toggle-maximize"
+  ]
+}
