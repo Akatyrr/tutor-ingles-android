@@ -53,7 +53,7 @@ fn main() {
         .setup(|app| {
             let handle = app.handle().clone();
             WebviewWindowBuilder::new(app, "principal", WebviewUrl::External(TUTOR.parse().unwrap()))
-                .title("Tutor de Inglês")
+                .title("Atarax")
                 .inner_size(1200.0, 800.0)
                 .min_inner_size(360.0, 500.0)
                 .decorations(false)
@@ -70,5 +70,5 @@ fn main() {
             Ok(())
         })
         .run(tauri::generate_context!())
-        .expect("erro ao abrir o Tutor de Inglês");
+        .expect("erro ao abrir o Atarax");
 }

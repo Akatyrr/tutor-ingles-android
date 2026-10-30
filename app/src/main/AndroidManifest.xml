@@ -13,7 +13,7 @@
     </queries>
 
     <application
-        android:label="Tutor de Inglês"
+        android:label="Atarax"
         android:icon="@mipmap/ic_launcher"
         android:allowBackup="true"
         android:usesCleartextTraffic="false"
