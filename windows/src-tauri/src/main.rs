@@ -34,6 +34,15 @@ const BORDA: &str = r#"
     const marca = () => document.querySelectorAll('#head, .brand, #side > header').forEach(e => e.setAttribute('data-tauri-drag-region', ''))
     marca(); new MutationObserver(marca).observe(document.body, { childList: true, subtree: true })
   }
+  // links de fora (YouTube, Spotify) abrem em "nova aba", que esta janela não tem: vira uma navegação comum,
+  // que o app manda para o navegador padrão
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href]')
+    if (!a || a.host === location.host || !/^https?:/.test(a.href)) return
+    e.preventDefault(); location.href = a.href
+  }, true)
+  const abre = window.open
+  window.open = (u, ...r) => { try { const x = new URL(u, location.href); if (x.host !== location.host) { location.href = x.href; return null } } catch (er) {} return abre.call(window, u, ...r) }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', monta); else monta()
 })()
 "#;
