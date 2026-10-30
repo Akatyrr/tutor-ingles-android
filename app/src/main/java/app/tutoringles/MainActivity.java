@@ -5,8 +5,10 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Message;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -80,7 +82,8 @@ public class MainActivity extends Activity {
         s.setDomStorageEnabled(true);
         s.setDatabaseEnabled(true);
         s.setMediaPlaybackRequiresUserGesture(false);
-        s.setSupportMultipleWindows(false);
+        // links de "nova aba" (YouTube, Spotify) chegam em onCreateWindow, que manda para fora
+        s.setSupportMultipleWindows(true);
 
         CookieManager cookies = CookieManager.getInstance();
         cookies.setAcceptCookie(true);
@@ -108,6 +111,33 @@ public class MainActivity extends Activity {
                     fileCallback = null;
                     return false;
                 }
+            }
+
+            // Link de "nova aba": uma WebView descartável recebe o endereço, que vai para o app certo (YouTube, Spotify, navegador)
+            @Override
+            public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
+                WebView aba = new WebView(MainActivity.this);
+                aba.setWebViewClient(new WebViewClient() {
+                    private boolean aberto = false;
+                    private void abre(WebView v, Uri uri) {
+                        if (aberto || uri == null || "about".equals(uri.getScheme())) return;
+                        aberto = true;
+                        openOutside(uri);
+                        v.post(v::destroy);
+                    }
+                    @Override
+                    public boolean shouldOverrideUrlLoading(WebView v, WebResourceRequest request) {
+                        abre(v, request.getUrl());
+                        return true;
+                    }
+                    @Override
+                    public void onPageStarted(WebView v, String url, Bitmap favicon) {
+                        abre(v, url == null ? null : Uri.parse(url));
+                    }
+                });
+                ((WebView.WebViewTransport) resultMsg.obj).setWebView(aba);
+                resultMsg.sendToTarget();
+                return true;
             }
         });
 
