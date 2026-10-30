@@ -1,6 +1,6 @@
 # Gera o APK do Tutor de Inglês a cada mudança e publica numa versão (Release) com link fixo:
 # https://github.com/<usuario>/tutor-ingles-android/releases/latest/download/tutor-ingles.apk
-name: APK
+name: APK e Windows
 on:
   push:
     branches: [main]
@@ -33,3 +33,32 @@ jobs:
           body: Baixe o arquivo tutor-ingles.apk abaixo e instale no celular (permita instalar desta fonte quando o Android pedir).
           files: tutor-ingles.apk
           make_latest: true
+
+  # Instalador para Windows (Tauri, motor de páginas do próprio Windows): vai para a mesma versão do APK
+  windows:
+    needs: apk
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: windows
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: windows/src-tauri
+      - name: Gerar instalador
+        shell: bash
+        run: |
+          npm install --no-audit --no-fund
+          npx tauri icon icone.png
+          npx tauri build
+          cp src-tauri/target/release/bundle/nsis/*.exe ../tutor-ingles-setup.exe
+          ls -l ../tutor-ingles-setup.exe
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          files: tutor-ingles-setup.exe

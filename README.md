@@ -2,7 +2,9 @@
 
 App de conversação em inglês com IA. Grátis.
 
-**Baixar:** [tutor-ingles.apk](../../releases/latest/download/tutor-ingles.apk)
+**Baixar:**
+- Celular Android: [tutor-ingles.apk](../../releases/latest/download/tutor-ingles.apk)
+- Computador Windows: [tutor-ingles-setup.exe](../../releases/latest/download/tutor-ingles-setup.exe) (se o Windows avisar "editor desconhecido", clique em Mais informações → Executar assim mesmo)
 
 Instalação: abra o link no celular, baixe e toque no arquivo. Se o Android pedir, permita instalar desta fonte. Depois é só criar sua conta com apelido e senha.
 

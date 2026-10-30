@@ -3,3 +3,6 @@ build/
 *.apk
 local.properties
 *.p12
+windows/node_modules/
+windows/src-tauri/target/
+windows/src-tauri/gen/
